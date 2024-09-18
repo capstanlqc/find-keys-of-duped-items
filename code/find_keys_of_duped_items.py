@@ -33,13 +33,6 @@ def read_files(file_list, data_dpath):
     return contents
 
 
-# with open("output.csv", "w", newline="") as file:
-#     writer = csv.writer(file)
-#     writer.writerows(data)
-
-# ╰─ for key in $(cat data/MS_FLASCQ.txt); do found_in_core=$(grep -q $key data/MS_SCQ.txt); found_in_ft=$(grep -q $key data/FT_FLASCQ.txt); if [[ "$found_in_ft" == false && "$found_in_core" == true ]]; then "key comes from core"; fi; done
-
-
 def generate_csv(data):
     # create an in-memory text stream
     output = io.StringIO()
@@ -87,3 +80,6 @@ if __name__ == "__main__":
     with open("output.csv", "w", newline="\n") as file:
         writer = csv.writer(file)
         writer.writerows(data)
+
+# checks in bash
+# ╰─ for key in $(cat data/MS_FLASCQ.txt); do found_in_core=$(grep -q $key data/MS_SCQ.txt); found_in_ft=$(grep -q $key data/FT_FLASCQ.txt); if [[ "$found_in_ft" == false && "$found_in_core" == true ]]; then "key comes from core"; fi; done

@@ -4,17 +4,14 @@ import pandas as pd
 
 root_dir = Path(__file__).parent.parent
 file_path = os.path.join(root_dir, "data", "ft-twms-qq-mask.csv")
-
-with open(file_path, "r", encoding="utf-8") as file:
-	# Read the content of the file
-    lines = file.read().splitlines()
-
 units = ["FLAPAQ", "FLASCQ", "FLASTQ", "FLATCQ", "ICQ", "LDWSTQ", "PAQ", "SCQ", "STQ", "TCQ", "FLATCQSCI"]
 data = {}
 
+with open(file_path, "r", encoding="utf-8") as file:
+    lines = file.read().splitlines()
+
 for line in lines:
 	unit_list = line.split(",")
-	print(unit_list)
 	masks = {}
 	for unit in units:
 		if unit == "FLATCQSCI" and "FLATCQ" in unit_list and "TCQ" in unit_list:
