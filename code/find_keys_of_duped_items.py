@@ -2,10 +2,14 @@ import os
 from pathlib import Path
 import csv
 import io
+from datetime import datetime
 
 
 root_dir = Path(__file__).parent.parent
 data_dpath = os.path.join(root_dir, "data", "keys")
+
+today = datetime.today()
+formatted_date = today.strftime("%Y%m%d")
 
 
 def list_files(directory):
@@ -43,7 +47,7 @@ def generate_csv(data):
     # get the CSV string from the in-memory text stream
     csv_output = output.getvalue()
     # Print the CSV output
-    print(csv_output)
+    # print(csv_output)
 
     # Close the in-memory text stream
     output.close()
@@ -72,12 +76,12 @@ if __name__ == "__main__":
                     print(f"Core unit {core_unit} not in cores")
                 if key not in ft_keys[unit] and key in ms_keys[core_unit]:
                     # print(f"Key '{key}' in FLA{core_unit} came from {core_unit}")
-                    print(f"{core_unit},{unit},{key}")
+                    # print(f"{core_unit},{unit},{key}")
                     data.append([core_unit, unit, key])
 
     generate_csv(data)
 
-    with open("output.csv", "w", newline="\n") as file:
+    with open(f"output/{formatted_date}/output_{formatted_date}.csv", "w", newline="\n") as file:
         writer = csv.writer(file)
         writer.writerows(data)
 
