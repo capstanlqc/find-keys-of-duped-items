@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 import csv
-import io
 from datetime import datetime
 from rich import print
 
@@ -36,22 +35,6 @@ def read_files(file_list, data_dpath):
             print(f"Failed to read {file_path}: {e}")
 
     return contents
-
-
-def generate_csv(data):
-    # create an in-memory text stream
-    output = io.StringIO()
-    # create a CSV writer object
-    writer = csv.writer(output)
-    # write data to the CSV
-    writer.writerows(data)
-    # get the CSV string from the in-memory text stream
-    csv_output = output.getvalue()
-    # Print the CSV output
-    # print(csv_output)
-
-    # Close the in-memory text stream
-    output.close()
 
 
 def get_files_containing_key(key, keys_in_files):
@@ -117,9 +100,9 @@ for ft_unit in ft_units:
 
 # generate results
 
-generate_csv(data)
-
-results_file = f"output/{formatted_date}/keys_{formatted_date}.csv"
+output_dir = f"output/{formatted_date}"
+os.makedirs(output_dir, exist_ok=True)
+results_file = f"{output_dir}/keys_{formatted_date}.csv"
 with open(results_file, "w", newline="\n") as file:
     writer = csv.writer(file)
     writer.writerows(data)
