@@ -54,14 +54,15 @@ if __name__ != "__main__":
 data = []
 
 # collect some data first
-
+mapping = {}
 with open(transfer_fpath, mode="r") as file:
-    transfer_data = [row for row in csv.DictReader(file)]
+    for row in csv.DictReader(file):
+        ms_keys = list(filter(lambda a: a != row["FT"], row["MS"].split()))
+        if row["FT"] not in mapping.keys():
+            mapping[row["FT"]] = ms_keys
+        else:
+            mapping[row["FT"]] = list(set(mapping[row["FT"]] + ms_keys))
 
-mapping = {
-    item["FT"]: [x for x in item["MS"].split() if x != item["FT"]]
-    for item in transfer_data
-}
 ft_units = mapping.keys()
 
 file_list = list_files(data_dpath)
@@ -71,11 +72,11 @@ qq_units = set([file[len("XX_") :][: -len(".txt")] for file in file_list])
 units_not_extracted = [unit for unit in ft_units if unit not in qq_units]
 
 if len(units_not_extracted) != 0:
-    exit(f"Check unit IDs and try again: {",".join(units_not_extracted)}")
+    exit(f"Check unit IDs and try again: {','.join(units_not_extracted)}")
 
 for unit in ft_units:
     print(
-        f"Find keys in FT's '{unit}' which are now in any of '{",".join(mapping[unit])}' in MS"
+        f"Find keys in FT's '{unit}' which are now in any of '{','.join(mapping[unit])}' in MS"
     )
 
 keys_in_ft_files = get_keys_in_files_for_cycle("FT", data_dpath)
