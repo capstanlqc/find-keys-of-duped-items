@@ -54,14 +54,17 @@ if __name__ != "__main__":
 data = []
 
 # collect some data first
-mapping = {}
+
 with open(transfer_fpath, mode="r") as file:
-    for row in csv.DictReader(file):
-        ms_keys = list(filter(lambda a: a != row["FT"], row["MS"].split()))
-        if row["FT"] not in mapping.keys():
-            mapping[row["FT"]] = ms_keys
-        else:
-            mapping[row["FT"]] = list(set(mapping[row["FT"]] + ms_keys))
+    transfer_data = [row for row in csv.DictReader(file)]
+
+mapping = {}
+for row in transfer_data:
+    ms_units = [x for x in row["MS"].split() if x != row["FT"]]
+    if row["FT"] not in mapping.keys():
+        mapping[row["FT"]] = ms_units
+    else:
+        mapping[row["FT"]] = list(set(mapping[row["FT"]] + ms_units))
 
 ft_units = mapping.keys()
 
