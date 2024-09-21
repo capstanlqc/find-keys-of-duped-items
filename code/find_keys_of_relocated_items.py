@@ -62,9 +62,9 @@ mapping = {}
 for row in transfer_data:
     ms_units = [x for x in row["MS"].split() if x != row["FT"]]
     if row["FT"] not in mapping.keys():
-        mapping[row["FT"]] = ms_units
+        mapping[row["FT"]] = sorted(ms_units)
     else:
-        mapping[row["FT"]] = list(set(mapping[row["FT"]] + ms_units))
+        mapping[row["FT"]] = list(sorted(set(mapping[row["FT"]] + ms_units)))
 
 ft_units = mapping.keys()
 
@@ -109,4 +109,4 @@ os.makedirs(output_dir, exist_ok=True)
 results_file = f"{output_dir}/keys_{formatted_date}.csv"
 with open(results_file, "w", newline="\n") as file:
     writer = csv.writer(file)
-    writer.writerows(data)
+    writer.writerows(sorted(data))
