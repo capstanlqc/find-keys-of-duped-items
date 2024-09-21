@@ -1,8 +1,8 @@
 # Find keys of relocated items
 
-The purpose of this utility is to extract the list of keys which were and are used in a core questoinnaire (e.g. STQ, SCQ, PAQ, TCQ, ICQ) which have been copied in MS to the FLA counterpart of a core questionnaire but were not in the same FLA unit in FT.
+The purpose of this utility is to extract the list of keys which were used in a certain questoinnaire in FT and have now been copied in MS to other related files.
 
-## Getting started
+## Extract data
 
 To collect the necessary data, extract the keys from each XML file. 
 
@@ -17,7 +17,7 @@ cd /path/to/common
 2. Run the script to extract keys from all XML files inside QQ batch folders: 
 
 ```
-bash /run/media/souto/257-FLASH/dev/find-keys-of-duped-items/code/extract_keys.sh
+bash /path/to/find-keys-of-duped-items/code/extract_keys.sh
 ```
 <!-- 
 for f in $(find source/0?_QQ?_N -name "*.xml"); do id=$(echo $(basename $f) | cut -d"_" -f4 | cut -d"-" -f1); echo $id; echo $f; grep -Poh --color '(?<=<label key=")[^"]+(?=")' $f > ../../ACER-PISA-2025-MS/keys/PISA2025FT_$id.txt; done
@@ -26,15 +26,16 @@ for f in $(find source/0?_QQ?_N -name "*.xml"); do id=$(echo $(basename $f) | cu
 3. Rename output files to tag them with the cycle:
 
 ```
-# cicle is either 'FT' or 'MS'
+# cycle is either 'FT' or 'MS', e.g. 
 perl-rename 's/^/MS_/' *.txt
+perl-rename 's/^/FT_/' *.txt
 ```
 
-4. Finally, move the keys files for both cycles to `data/keys` in this directory
+4. Finally, move the keys files for both cycles to `data/keys` in this repo.
 
 ## Run the three-side comparison
 
-Run the following script to list the keys that have been copied to a FLA quesitonnaire in MS:
+Run the following script to extract the keys that have been copied to another QQ file in MS:
 
 ```
 python code/find_keys_of_relocated_items.py
