@@ -12,6 +12,11 @@ today = datetime.today()
 formatted_date = today.strftime("%Y%m%d")
 
 
+def read_csv_file(fpath):
+    with open(fpath, mode="r") as file:
+        return [row for row in csv.DictReader(file)]
+
+
 def list_files(directory):
     files = os.listdir(directory)
     files = [f for f in files if os.path.isfile(os.path.join(directory, f))]
@@ -51,15 +56,13 @@ def get_keys_in_files_for_cycle(cycle, data_dpath):
 if __name__ != "__main__":
     exit()
 
-data = []
-
 # collect some data first
 
-with open(transfer_fpath, mode="r") as file:
-    transfer_data = [row for row in csv.DictReader(file)]
+data = []
+csv_data = read_csv_file(transfer_fpath)
 
 mapping = {}
-for row in transfer_data:
+for row in csv_data:
     ms_units = [x for x in row["MS"].split() if x != row["FT"]]
     if row["FT"] not in mapping.keys():
         mapping[row["FT"]] = sorted(ms_units)
