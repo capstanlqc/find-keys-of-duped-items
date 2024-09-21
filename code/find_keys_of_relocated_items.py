@@ -3,6 +3,7 @@ from pathlib import Path
 import csv
 from datetime import datetime
 from rich import print
+import pandas as pd
 
 root_dir = Path(__file__).parent.parent
 data_dpath = os.path.join(root_dir, "data", "keys")
@@ -15,6 +16,28 @@ formatted_date = today.strftime("%Y%m%d")
 def read_csv_file(fpath):
     with open(fpath, mode="r") as file:
         return [row for row in csv.DictReader(file)]
+
+
+def merge_entries_with_same_key(df):
+    return (
+        df.groupby("FT")["MS"]
+        .apply(lambda x: " ".join(sorted(set(" ".join(x).split()))))
+        .reset_index()
+    )
+
+
+def csv_to_dict(csv_data):
+    df = pd.DataFrame.from_dict(csv_data)
+    df_merged = merge_entries_with_same_key(df)
+    # return dict(zip(df_merged["FT"], df_merged["MS"])) # equivalent to
+    return df_merged.set_index("FT")["MS"].to_dict()
+
+
+def get_unit_mapping(csv_data):
+    return {
+        ft_unit: [unit for unit in ms_units.split() if unit != ft_unit]
+        for ft_unit, ms_units in csv_to_dict(csv_data).items()
+    }
 
 
 def list_files(directory):
@@ -60,17 +83,9 @@ if __name__ != "__main__":
 
 data = []
 csv_data = read_csv_file(transfer_fpath)
-
-mapping = {}
-for row in csv_data:
-    ms_units = [x for x in row["MS"].split() if x != row["FT"]]
-    if row["FT"] not in mapping.keys():
-        mapping[row["FT"]] = sorted(ms_units)
-    else:
-        mapping[row["FT"]] = list(sorted(set(mapping[row["FT"]] + ms_units)))
+mapping = get_unit_mapping(csv_data)
 
 ft_units = mapping.keys()
-
 file_list = list_files(data_dpath)
 
 # XX_ stands for three characters: either FT_ or MS_
@@ -78,11 +93,11 @@ qq_units = set([file[len("XX_") :][: -len(".txt")] for file in file_list])
 units_not_extracted = [unit for unit in ft_units if unit not in qq_units]
 
 if len(units_not_extracted) != 0:
-    exit(f"Check unit IDs and try again: {','.join(units_not_extracted)}")
+    exit(f"Check unit IDs and try again: {",".join(units_not_extracted)}")
 
 for unit in ft_units:
     print(
-        f"Find keys in FT's '{unit}' which are now in any of '{','.join(mapping[unit])}' in MS"
+        f"Find keys in FT's '{unit}' which are now in any of '{",".join(mapping[unit])}' in MS"
     )
 
 keys_in_ft_files = get_keys_in_files_for_cycle("FT", data_dpath)
